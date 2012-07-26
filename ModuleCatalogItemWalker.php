@@ -63,14 +63,19 @@ class ModuleCatalogItemWalker extends ModuleCatalog
 			
 			$arrDepData = array();
 			
-			foreach ($arrDep[0] as $key=>$value)
+			if ((is_array($arrDep)) && (count($arrDep)>0))
 			{
-				$arrDepData[] = sprintf("%s=%s",$key,(is_string($value)) ? "'".$value."'" : $value);
+				
+				foreach ($arrDep[0] as $key=>$value)
+				{
+					$arrDepData[] = sprintf("%s=%s",$key,(is_string($value)) ? "'".$value."'" : $value);
+					
+				}
+				
+				$strWhereClause = "WHERE ".implode(" AND ",$arrDepData);
+				$strOrderClause = "ORDER BY ".implode(",",array_keys($arrDep[0]))." ".$this->catalog_itemwalker_category_sort;
 				
 			}
-			
-			$strWhereClause = "WHERE ".implode(" AND ",$arrDepData);
-			$strOrderClause = "ORDER BY ".implode(",",array_keys($arrDep[0]))." ".$this->catalog_itemwalker_category_sort;
 		}
 		
 		$objCatalogStmt = $this->Database->prepare("SELECT id,pid,".$objCatalogName->aliasField.",".implode(',',$arrVisibleFields)." 
